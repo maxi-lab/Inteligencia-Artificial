@@ -5,6 +5,7 @@ import torch.nn as nn
 import torch.optim as optim
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 import matplotlib.pyplot as plt
 
 print("Cargando y fusionando datasets...")
@@ -74,8 +75,8 @@ scaler_y = StandardScaler()
 X_scaled = scaler_X.fit_transform(X_pandas)
 y_scaled = scaler_y.fit_transform(y_pandas.values.reshape(-1, 1))
 
-# 7. Separar en conjunto de Entrenamiento (80%) y Prueba (20%)
-X_train, X_test, y_train, y_test = train_test_split(X_scaled, y_scaled, test_size=0.2, random_state=42)
+# 7. Separar en conjunto de Entrenamiento (80%) y Prueba (25%)
+X_train, X_test, y_train, y_test = train_test_split(X_scaled, y_scaled, test_size=0.25, random_state=42)
 
 # ==========================================
 # PASO 2: CONVERSIÓN A TENSORES DE PYTORCH
@@ -131,6 +132,7 @@ plt.plot(historial_perdida)
 plt.title('Curva de Aprendizaje del Modelo')
 plt.xlabel('Época')
 plt.ylabel('Pérdida (MSE)')
+plt.savefig("curva_aprendizaje.png")
 plt.show()
 
 # ==========================================
@@ -141,6 +143,53 @@ with torch.no_grad(): # Desactivamos el cálculo de gradientes
     predicciones_test = modelo(X_test_tensor)
     perdida_test = criterio(predicciones_test, y_test_tensor)
     print(f'\nPérdida en conjunto de prueba (MSE): {perdida_test.item():.4f}')
+    # Convertimos tensores a numpy
+    y_real = y_test_tensor.numpy()
+    y_pred = predicciones_test.numpy()
+
+    # Calculamos métricas
+    mae = mean_absolute_error(y_real, y_pred)
+    rmse = np.sqrt(mean_squared_error(y_real, y_pred))
+    r2 = r2_score(y_real, y_pred)
+
+    print("\n--- MÉTRICAS DEL MODELO ---")
+    print(f"MAE  : {mae:.4f}")
+    print(f"RMSE : {rmse:.4f}")
+    print(f"R²   : {r2:.4f}")
+
+    # ==========================================
+    # EXPORTAR RESULTADOS DE VALIDACIÓN
+    # ==========================================
+
+    resultados = pd.DataFrame({
+        'DALY_REAL': y_real.flatten(),
+        'DALY_PREDICHO': y_pred.flatten()
+    })
+
+    resultados['ERROR_ABSOLUTO'] = abs(
+        resultados['DALY_REAL'] - resultados['DALY_PREDICHO']
+    )
+
+    resultados.to_csv("resultados_validacion.csv", index=False)
+
+    print("\nArchivo 'resultados_validacion.csv' generado correctamente.")
+
+    # ==========================================
+    # GRÁFICO REAL VS PREDICHO
+    # ==========================================
+
+    plt.figure(figsize=(8,6))
+
+    plt.scatter(y_real, y_pred)
+
+    plt.xlabel("Valor Real")
+    plt.ylabel("Valor Predicho")
+
+    plt.title("Comparación Real vs Predicho")
+
+    plt.savefig("real_vs_predicho.png")
+
+    plt.show()
 
 # --- EJEMPLO DE PREDICCIÓN CON UN PAÍS NUEVO ---
 print("\n--- Simulando Predicción ---")
