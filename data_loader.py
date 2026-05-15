@@ -22,7 +22,7 @@ def cargar_datos():
     df = pd.merge(df_prev, df_daly, on=['Entity', 'Code', 'Year'], how='inner')
     df = df.dropna()
 
-    X = df[['esquizofrenia', 'depresion', 'ansiedad', 'bipolaridad', 'alimentarios']]
+    X = df[['esquizofrenia', 'depresion', 'ansiedad', 'bipolaridad', 'alimentarios']] #asignarle numeros
     y = df['daly_objetivo']
 
     scaler_X = StandardScaler()

@@ -6,8 +6,8 @@ class MLP_Simple(nn.Module):
         super(MLP_Simple, self).__init__()
         self.capa1 = nn.Linear(5, 16)
         self.capa2 = nn.Linear(16, 8)
-        self.salida = nn.Linear(8, 1)
-        self.relu = nn.ReLU()
+        self.salida = nn.Linear(8, 1) # codificacion de enfermedades 
+        self.relu = nn.ReLU()#softmax para clasificacion, relu para regresion
 
     def forward(self, x):
         x = self.relu(self.capa1(x))
