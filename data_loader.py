@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
+
 # Nombres cortos para las 5 enfermedades de salida
 ENFERMEDADES_SALIDA = [
     'daly_depresion',

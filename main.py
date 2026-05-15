@@ -1,5 +1,8 @@
 import os
+
 from data_loader import cargar_datos, ENFERMEDADES_SALIDA
+
+
 from model import MLP_Simple, MLP_Grande
 from train import entrenar
 from evaluate import evaluar

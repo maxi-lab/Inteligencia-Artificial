@@ -4,7 +4,9 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
+
 from data_loader import ENFERMEDADES_SALIDA
+
 
 def evaluar(modelo, datos, nombre_modelo='modelo'):
     X_test = torch.tensor(datos['X_test'], dtype=torch.float32)
@@ -14,6 +16,7 @@ def evaluar(modelo, datos, nombre_modelo='modelo'):
     modelo.eval()
     with torch.no_grad():
         predicciones_scaled = modelo(X_test)
+
         # MSELoss sobre la matriz completa (N×5): un único valor de pérdida global
         perdida_test = nn.MSELoss()(predicciones_scaled, y_test)
 
